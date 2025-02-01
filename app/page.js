@@ -3,7 +3,7 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { ClipLoader } from "react-spinners";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
@@ -13,11 +13,13 @@ export default function Home() {
   const [pins, setPins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isClient, setIsClient] = useState(false); // To check if it's client-side
 
   const searchParams = useSearchParams();
   const search = searchParams.get("search");
 
-  const getPins = async () => {
+  const getPins = useCallback(async () => {
+    if (!session) return; // Only fetch pins if session is available
     setLoading(true);
     setError(null); // Reset error state before the request
     const url = search
@@ -25,7 +27,11 @@ export default function Home() {
       : "http://localhost:3000/api/pin";
     try {
       const response = await axios.get(url);
-      setPins(response.data.pins);
+      if (Array.isArray(response.data.pins)) {
+        setPins(response.data.pins);
+      } else {
+        setPins([]); // If the response isn't the expected structure, set pins to an empty array
+      }
     } catch (err) {
       console.error(err);
       setError("Failed to fetch pins");
@@ -33,11 +39,22 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, session]);
 
   useEffect(() => {
-    getPins();
-  }, [search, session]);
+    // Mark as client-side after the initial render
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient && session) {
+      getPins();
+    }
+  }, [search, session, isClient, getPins]);
+
+  if (!isClient) {
+    return <div>Loading...</div>; // Optionally show a loading screen while determining if it's client-side
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 py-2">
