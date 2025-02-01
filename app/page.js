@@ -1,24 +1,22 @@
+// pages/index.js or your Home component
 "use client";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { ClipLoader } from "react-spinners";
 import { useState, useEffect, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { Suspense } from "react";
+import SearchParamsWrapper from "./components/SearchParamsWrapper";
 
-export default function Home() {
+const HomeContent = () => {
   const { data: session } = useSession();
   const [pins, setPins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isClient, setIsClient] = useState(false); // To check if it's client-side
 
-  const searchParams = useSearchParams();
-  const search = searchParams.get("search");
-
-  const getPins = useCallback(async () => {
+  const getPins = useCallback(async (search) => {
     if (!session) return; // Only fetch pins if session is available
     setLoading(true);
     setError(null); // Reset error state before the request
@@ -39,60 +37,73 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [search, session]);
+  }, [session]);
 
   useEffect(() => {
-    // Mark as client-side after the initial render
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (isClient && session) {
+    if (session) {
       getPins();
     }
-  }, [search, session, isClient, getPins]);
-
-  if (!isClient) {
-    return <div>Loading...</div>; // Optionally show a loading screen while determining if it's client-side
-  }
+  }, [session, getPins]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 py-2">
-      <div className="container mx-auto p-4">
-        {loading ? (
-          <div className="flex justify-center items-center min-h-[750px]">
-            <ClipLoader color="#ef4444" size={120} />
+    <SearchParamsWrapper>
+      {(searchParams) => {
+        const search = searchParams?.get("search");
+
+        useEffect(() => {
+          if (search) {
+            getPins(search);
+          }
+        }, [search, getPins]);
+
+        return (
+          <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 py-2">
+            <div className="container mx-auto p-4">
+              {loading ? (
+                <div className="flex justify-center items-center min-h-[750px]">
+                  <ClipLoader color="#ef4444" size={120} />
+                </div>
+              ) : error ? (
+                <h3 className="min-h-[750px] flex justify-center items-center text-red-500 text-4xl font-semibold">
+                  {error}
+                </h3>
+              ) : pins.length === 0 ? (
+                <h3 className="min-h-[750px] flex justify-center items-center text-red-500 text-4xl font-semibold">
+                  No results found for your search.
+                </h3>
+              ) : (
+                <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4">
+                  {pins.map((item) => (
+                    <Link
+                      href={`/pin/${item._id}`}
+                      key={item._id}
+                      className="relative mb-4 group"
+                    >
+                      <Image
+                        src={item?.image?.url}
+                        alt={item.title}
+                        height={300}
+                        width={300}
+                        className="w-full h-auto rounded-lg py-1"
+                        priority
+                      />
+                      <span className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        ) : error ? (
-          <h3 className="min-h-[750px] flex justify-center items-center text-red-500 text-4xl font-semibold">
-            {error}
-          </h3>
-        ) : pins.length === 0 ? (
-          <h3 className="min-h-[750px] flex justify-center items-center text-red-500 text-4xl font-semibold">
-            No results found for your search.
-          </h3>
-        ) : (
-          <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4">
-            {pins.map((item) => (
-              <Link
-                href={`/pin/${item._id}`}
-                key={item._id}
-                className="relative mb-4 group"
-              >
-                <Image
-                  src={item?.image?.url}
-                  alt={item.title}
-                  height={300}
-                  width={300}
-                  className="w-full h-auto rounded-lg py-1"
-                  priority
-                />
-                <span className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+        );
+      }}
+    </SearchParamsWrapper>
+  );
+};
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
