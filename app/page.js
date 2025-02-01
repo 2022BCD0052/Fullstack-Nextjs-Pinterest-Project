@@ -45,16 +45,18 @@ const HomeContent = () => {
     }
   }, [session, getPins]);
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const search = searchParams.get("search");
+    if (search) {
+      getPins(search);
+    }
+  }, [getPins]);
+
   return (
     <SearchParamsWrapper>
       {(searchParams) => {
         const search = searchParams?.get("search");
-
-        useEffect(() => {
-          if (search) {
-            getPins(search);
-          }
-        }, [search, getPins]);
 
         return (
           <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 py-2">
