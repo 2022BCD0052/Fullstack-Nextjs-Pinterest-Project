@@ -39,12 +39,9 @@ const Pin = () => {
 
   const handlePostComment = async () => {
     if (session && session?.user) {
-      console.log(session);
       const profileImage = session?.user?.image;
       const user = session?.user?.name;
-      console.log("Comment", comment);
-      console.log("User", user);
-      console.log("Profile Image", profileImage);
+
       if (!comment || !profileImage || !user) {
         toast.error("Please add a comment");
         return;
@@ -100,99 +97,114 @@ const Pin = () => {
   return (
     <>
       {pin && pin?.image?.url && morePins ? (
-        <div className="min-h-screen py-3 md:py-6">
+        <div className="min-h-screen bg-gradient-to-r from-black via-gray-800 to-gray-900  py-8">
           <div className="container mx-auto px-4">
-            <div className="lg:flex justify-center">
-              <div className="w-fit mb-6 lg:mb-0 mx-auto lg:mx-0">
-                <Image
-                  src={pin?.image?.url}
-                  alt="Pin"
-                  className="rounded-xl shadow-lg max-h-[600px] object-cover w-auto md:ml-auto"
-                  width={300}
-                  height={300}
-                  priority={true}
+            {/* Pin Image Section */}
+            <div className="flex justify-center mb-8 relative group">
+  <div className="rounded-xl overflow-hidden max-w-[30%] w-full md:h-[70%] lg:h-[40%] bg-transparent shadow-2xl transform transition-all hover:shadow-2xl">
+    <Image
+      src={pin?.image?.url}
+      alt="Pin"
+      className="rounded-xl shadow-lg object-cover w-full max-w-3xl h-full group-hover:opacity-80 transition-opacity"
+      width={1000}
+      height={600}
+      priority={true}
+    />
+    <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-t from-black opacity-30 group-hover:opacity-50 transition-opacity"></div>
+  </div>
+</div>
+
+
+
+            {/* Pin Details Section */}
+            <div className="max-w-4xl mx-auto text-white mt-10">
+              <div className="flex justify-between items-center mb-6">
+                <Heart
+                  onClick={handleLikePin}
+                  className={`${
+                    isLiked
+                      ? "bg-red-500 text-white hover:bg-red-700"
+                      : "bg-transparent hover:bg-red-500"
+                  } transition-all duration-300 w-14 h-14 p-3 rounded-full cursor-pointer shadow-xl transform hover:rotate-12 hover:scale-110`}
                 />
+                <Link
+                  href={pin?.image?.url}
+                  target="_blank"
+                  className="bg-red-500 text-white px-8 py-4 rounded-lg font-semibold shadow-lg transition-all hover:bg-red-600 hover:scale-105"
+                >
+                  Download
+                </Link>
               </div>
+              <p className="text-gray-400 text-lg">
+                {pin?.likes?.length <= 1
+                  ? `${pin?.likes?.length} Like`
+                  : `${pin?.likes?.length} Likes`}
+              </p>
 
-              <div className="lg:w-1/3 lg:pl-10">
-                <div className="flex justify-between items-center mb-6">
-                  <Heart
-                    onClick={handleLikePin}
-                    className={`${
-                      isLiked
-                        ? "bg-red-500 text-white hover:bg-red-700"
-                        : "bg-transparent hover:bg-red-500"
-                    } transition-all duration-300 w-10 h-10 p-2 rounded-full`}
-                  />
-                  <div>
-                    <Link
-                      href={pin?.image?.url}
-                      target="_blank"
-                      className="bg-red-500 text-white px-4 py-3 rounded-lg font-semibold"
-                    >
-                      Download
-                    </Link>
-                  </div>
+              {/* Comments Section */}
+              <div className="mt-6">
+                <h3 className="text-2xl font-bold mb-4">Comments</h3>
+                <div className="max-h-96 overflow-auto space-y-4">
+                  {pin?.comments?.length > 0 ? (
+                    pin.comments.map((element) => (
+                      <Comment
+                        key={element._id}
+                        user={element.user}
+                        comment={element.comment}
+                        profileImage={element.profileImage}
+                      />
+                    ))
+                  ) : (
+                    <p className="font-semibold text-lg text-gray-500">
+                      No Comments Yet!
+                    </p>
+                  )}
                 </div>
-                <p>
-                  {pin?.likes?.length <= 1
-                    ? `${pin?.likes?.length} Like`
-                    : `${pin?.likes?.length} Likes`}
-                </p>
-
-                <div>
-                  <h3 className="text-xl font-bold mb-4">
-                    {pin?.comments?.length} Comments
-                  </h3>
-                  <div className="max-h-96 overflow-auto">
-                    {pin?.comments?.length > 0 ? (
-                      pin.comments.map((element) => {
-                        return (
-                          <Comment
-                            key={element._id}
-                            user={element.user}
-                            comment={element.comment}
-                            profileImage={element.profileImage}
-                          />
-                        );
-                      })
-                    ) : (
-                      <p className="font-semibold text-lg">No Comments Yet!</p>
-                    )}
-                  </div>
-                  <div className="mt-4 relative">
-                    <input
-                      type="text"
-                      placeholder="Comment"
-                      className="w-full bg-gray-100 p-3 rounded-lg pr-12 focus:outline-red-500"
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                    />
-                    <Send
-                      onClick={handlePostComment}
-                      className="absolute right-[16px] top-[14px] text-red-500"
-                    />
-                  </div>
+                <div className="mt-6 relative">
+                  <input
+                    type="text"
+                    placeholder="Add a comment..."
+                    className="w-full bg-gray-800 p-4 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                  />
+                  <Send
+                    onClick={handlePostComment}
+                    className="absolute right-4 top-4 text-red-500 cursor-pointer hover:text-red-600 transition"
+                  />
                 </div>
               </div>
             </div>
-            <h3 className="mt-10 text-2xl font-semibold">More to Explore</h3>
-            <div className="flex space-x-4 overflow-x-auto py-4">
-              {morePins &&
-                morePins.map((element) => {
-                  return (
-                    <Link href={`/pin/${element._id}`} key={element._id}>
-                      <Image
-                        width={100}
-                        height={100}
-                        src={element?.image?.url}
-                        alt={"Pin"}
-                        className="w-32 h-32 object-cover rounded-lg shadow-md"
-                        priority={true}
-                      />
+
+            {/* More Pins Section */}
+            <div className="mt-12">
+              <h3 className="text-3xl font-semibold text-white">
+                More to Explore
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+                {morePins &&
+                  morePins.map((element) => (
+                    <Link
+                      href={`/pin/${element._id}`}
+                      key={element._id}
+                      className="relative rounded-lg overflow-hidden group transform hover:scale-105 transition-all duration-300"
+                    >
+                      <div className="shadow-xl hover:scale-110 hover:rotate-3 transition-all">
+                        <Image
+                          width={500}
+                          height={500}
+                          src={element?.image?.url}
+                          alt={"Pin"}
+                          className="w-full h-48 object-cover"
+                          priority={true}
+                        />
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-40 text-white p-3 transition-all">
+                        <p className="text-lg font-semibold">{element.title}</p>
+                      </div>
                     </Link>
-                  );
-                })}
+                  ))}
+              </div>
             </div>
           </div>
         </div>

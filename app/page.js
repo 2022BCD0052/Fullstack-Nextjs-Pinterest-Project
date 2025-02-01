@@ -27,7 +27,8 @@ export default function Home() {
   }, [search, session]);
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-r from-black via-gray-800 to-gray-900 py-2">
+
       <div className="container mx-auto p-4">
         {(!pins || pins.length <= 0) && !search ? (
           <div className="flex justify-center items-center min-h-[750px]">
@@ -47,7 +48,7 @@ export default function Home() {
                     alt={item.title}
                     height={300}
                     width={300}
-                    className="w-full h-auto rounded-lg"
+                    className="w-full h-auto rounded-lg py-1"
                     priority
                   />
                   <span className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
@@ -61,6 +62,8 @@ export default function Home() {
           </h3>
         )}
       </div>
-    </>
+
+    </div>
   );
 }
+
