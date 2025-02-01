@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 
@@ -19,24 +19,31 @@ const Pin = () => {
   const { id } = useParams();
   const { data: session } = useSession();
 
+  // Function to fetch more pins
   const fetchMorePins = async () => {
-    const response = await axios.get("http://localhost:3000/api/pin");
-    setMorePins(response.data.pins);
-  };
-
-  const fetchPin = async () => {
-    const response = await axios.get(`http://localhost:3000/api/pin/${id}`);
-    setPin(response.data.pin);
-    const pinLiked = response.data.pin.likes.some(
-      (element) => session?.user?.name === element.user
-    );
-    if (pinLiked) {
-      setIsLiked(true);
-    } else {
-      setIsLiked(false);
+    try {
+      const response = await axios.get("http://localhost:3000/api/pin");
+      setMorePins(response.data.pins);
+    } catch (error) {
+      toast.error("Failed to fetch more pins.");
     }
   };
 
+  // Function to fetch specific pin
+  const fetchPin = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/pin/${id}`);
+      setPin(response.data.pin);
+      const pinLiked = response.data.pin.likes.some(
+        (element) => session?.user?.name === element.user
+      );
+      setIsLiked(pinLiked);
+    } catch (error) {
+      toast.error("Failed to fetch pin.");
+    }
+  };
+
+  // Function to handle posting comments
   const handlePostComment = async () => {
     if (session && session?.user) {
       const profileImage = session?.user?.image;
@@ -46,6 +53,7 @@ const Pin = () => {
         toast.error("Please add a comment");
         return;
       }
+
       try {
         const formData = new FormData();
         formData.append("user", user);
@@ -59,62 +67,65 @@ const Pin = () => {
             headers: { "Content-Type": "application/json" },
           }
         );
+
         if (res.status === 201) {
           toast.success(res.data.message);
           fetchPin();
           setComment("");
         }
       } catch (error) {
-        toast.error(error.response.data.error);
+        toast.error(error.response?.data?.error || "Failed to post comment.");
       }
     }
   };
 
+  // Function to handle like action on pin
   const handleLikePin = async () => {
-    const response = await axios.post(
-      `http://localhost:3000/api/like/${id}`,
-      "",
-      {
-        headers: { "Content-Type": "application/json" },
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/like/${id}`,
+        "",
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        toast.success(response.data.message);
+        fetchPin();
+      } else {
+        toast.error("Internal server error");
       }
-    );
-    if (response.status === 201) {
-      toast.success(response.data.message);
-      fetchPin();
-    } else if (response.status === 200) {
-      toast.success(response.data.message);
-      fetchPin();
-    } else {
-      toast.error("Internal server error");
+    } catch (error) {
+      toast.error("Failed to like pin.");
     }
   };
 
+  // Fetch pin data and more pins on initial load or when id changes
   useEffect(() => {
     fetchPin();
     fetchMorePins();
-  }, [id]);
+  }, [id]); // Add fetchPin and fetchMorePins as dependencies to avoid missing dependencies warning
 
   return (
-    <>
-      {pin && pin?.image?.url && morePins ? (
+    <Suspense fallback={<ClipLoader color="#ef4444" size={120} />}>
+      {pin?.image?.url && morePins ? (
         <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900  py-8">
           <div className="container mx-auto px-4">
             {/* Pin Image Section */}
             <div className="flex justify-center mb-8 relative group">
-  <div className="rounded-xl overflow-hidden max-w-[30%] w-full md:h-[70%] lg:h-[40%] bg-transparent shadow-2xl transform transition-all hover:shadow-2xl">
-    <Image
-      src={pin?.image?.url}
-      alt="Pin"
-      className="rounded-xl shadow-lg object-cover w-full max-w-3xl h-full group-hover:opacity-80 transition-opacity"
-      width={1000}
-      height={600}
-      priority={true}
-    />
-    <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-t from-black opacity-30 group-hover:opacity-50 transition-opacity"></div>
-  </div>
-</div>
-
-
+              <div className="rounded-xl overflow-hidden max-w-[30%] w-full md:h-[70%] lg:h-[40%] bg-transparent shadow-2xl transform transition-all hover:shadow-2xl">
+                <Image
+                  src={pin?.image?.url}
+                  alt="Pin"
+                  className="rounded-xl shadow-lg object-cover w-full max-w-3xl h-full group-hover:opacity-80 transition-opacity"
+                  width={1000}
+                  height={600}
+                  priority={true}
+                />
+                <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-t from-black opacity-30 group-hover:opacity-50 transition-opacity"></div>
+              </div>
+            </div>
 
             {/* Pin Details Section */}
             <div className="max-w-4xl mx-auto text-white mt-10">
@@ -210,10 +221,10 @@ const Pin = () => {
         </div>
       ) : (
         <div className="flex justify-center items-center min-h-[750px]">
-          {/* <ClipLoader color="#ef4444" size={120} /> */}
+          <ClipLoader color="#ef4444" size={120} />
         </div>
       )}
-    </>
+    </Suspense>
   );
 };
 
