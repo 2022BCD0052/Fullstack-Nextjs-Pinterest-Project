@@ -97,7 +97,7 @@ const Pin = () => {
   return (
     <>
       {pin && pin?.image?.url && morePins ? (
-        <div className="min-h-screen bg-gradient-to-r from-black via-gray-800 to-gray-900  py-8">
+        <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900  py-8">
           <div className="container mx-auto px-4">
             {/* Pin Image Section */}
             <div className="flex justify-center mb-8 relative group">

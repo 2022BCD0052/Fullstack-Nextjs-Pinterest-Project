@@ -27,7 +27,7 @@ export default function Home() {
   }, [search, session]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-black via-gray-800 to-gray-900 py-2">
+    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 py-2">
 
       <div className="container mx-auto p-4">
         {(!pins || pins.length <= 0) && !search ? (

@@ -39,7 +39,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="w-full  shadow-md bg-white px-6 md:px-10 py-4 relative">
+    <nav className="w-full z-50 shadow-md bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 px-6 md:px-10 py-4 relative">
       <div className="flex justify-between items-center container mx-auto">
         {/* Left - Logo & Desktop Links */}
         <div className="flex items-center space-x-6">
@@ -55,7 +55,7 @@ const Navbar = () => {
         </div>
 
         {/* Search Bar (Desktop) */}
-        <div className="hidden md:flex items-center w-1/2">
+        <div className="hidden md:flex items-center  w-1/2">
           <div className="relative w-full">
             <input
               type="text"
@@ -97,7 +97,7 @@ const Navbar = () => {
             </div>
           )}
 
-          <button className="md:hidden text-red-500" onClick={() => setIsSidebarOpen(true)}>
+          <button className="md:hidden text-red-500 " onClick={() => setIsSidebarOpen(true)}>
             <Menu size={36} />
           </button>
         </div>
@@ -105,22 +105,22 @@ const Navbar = () => {
 
       {/* Mobile Sidebar (Opens from Right) */}
       <div
-        className={`fixed top-0 right-0 h-screen w-64 bg-white shadow-lg transform transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-screen w-64 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white shadow-lg transform transition-transform duration-300 z-50 ${
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">Menu</h2>
+          <h2 className="text-xl font-semibold text-gray-300">Menu</h2>
           <button onClick={() => setIsSidebarOpen(false)}>
             <X size={28} className="text-gray-600 hover:text-red-500 transition" />
           </button>
         </div>
 
         <nav className="p-4 space-y-4">
-          <Link href="/" className="block py-2 text-lg font-medium text-gray-700 hover:text-red-500 transition" onClick={() => setIsSidebarOpen(false)}>
+          <Link href="/" className="block py-2 text-lg font-medium text-gray-300 hover:text-red-500 transition" onClick={() => setIsSidebarOpen(false)}>
             Home
           </Link>
-          <Link href="/upload-pin" className="block py-2 text-lg font-medium text-gray-700 hover:text-red-500 transition" onClick={() => setIsSidebarOpen(false)}>
+          <Link href="/upload-pin" className="block py-2 text-lg font-medium text-gray-300 hover:text-red-500 transition" onClick={() => setIsSidebarOpen(false)}>
             Create Pin
           </Link>
 
@@ -135,7 +135,7 @@ const Navbar = () => {
             />
             <Search
               onClick={handleSearch}
-              className="absolute right-2.5 top-1/2 transform -translate-y-1/2 bg-red-500 text-white w-9 h-9 p-2 rounded-full hover:bg-red-700 cursor-pointer"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-red-500 text-white w-10 h-10 p-2 rounded-full hover:bg-red-700 cursor-pointer"
             />
           </div>
 
@@ -152,7 +152,7 @@ const Navbar = () => {
       </div>
 
       {/* Overlay when sidebar is open */}
-      {isSidebarOpen && <div className="fixed inset-0" onClick={() => setIsSidebarOpen(false)}></div>}
+      {isSidebarOpen && <div className="fixed inset-0 bg-black opacity-50 z-40" onClick={() => setIsSidebarOpen(false)}></div>}
     </nav>
   );
 };

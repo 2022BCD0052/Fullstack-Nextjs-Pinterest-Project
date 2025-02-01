@@ -40,7 +40,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-black via-gray-800 to-gray-900 fixed  top-0 left-0 w-full px-4 sm:px-6">
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 fixed  top-0 left-0 w-full px-4 sm:px-6">
       <div className="relative p-6 sm:p-10 rounded-3xl shadow-xl w-full max-w-sm sm:max-w-md transform transition duration-700 hover:scale-105 hover:shadow-2xl bg-black bg-opacity-40 backdrop-blur-md border border-gray-600 border-opacity-50">
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-pink-500 to-cyan-400 opacity-20 blur-2xl pointer-events-none"></div>
 

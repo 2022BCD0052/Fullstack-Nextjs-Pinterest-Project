@@ -68,14 +68,14 @@ const UploadPin = () => {
 
   return (
     <>
-      <div className="mx-auto contianer flex flex-col min-h-screen px-5">
-        <h2 className="container mx-auto py-5 text-2xl font-bold sm:text-3xl sm:font-semibold md:text-4xl md:font-normal mb-4">
-          Create Pin
+      <div className="mx-auto  flex flex-col min-h-screen px-5 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
+        <h2 className="text-center   text-5xl font-extrabold py-8 text-gradient animate-gradient-x">
+          Upload   Image
         </h2>
         <div className="w-full mx-auto max-w-[1024px] gap-5 py-7">
-          <div className="w-full gap-5 sm:flex-1 flex items-center flex-col md:flex-row md:justify-center">
+          <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-10">
             <div
-              className="bg-[#3a3a3a24] hover:cursor-pointer w-full md:w-[340px] flex items-center justify-center relative rounded-[20px] min-h-[450px]"
+              className="bg-transparent hover:cursor-pointer w-full sm:w-[380px] flex items-center justify-center relative rounded-[20px] min-h-[450px] border-4 border-dashed border-gray-500 hover:border-indigo-500 transition-all duration-500 shadow-xl transform hover:scale-105 hover:rotate-1"
               onClick={() => document.getElementById("fileInput").click()}
             >
               <input
@@ -88,46 +88,69 @@ const UploadPin = () => {
                 <Image
                   src={imagePreview}
                   alt={"ImagePreview"}
-                  className="rounded-[20px] w-full"
-                  width={300}
-                  height={300}
+                  className="rounded-[20px] w-full object-cover"
+                  width={400}
+                  height={400}
                 />
               ) : (
                 <>
-                  <div className="flex flex-col items-center gap-5">
-                    <ArrowUpFromLine className="bg-black w-[38px] h-[38px] p-[6px] text-white rounded-full" />
-                    <p>Choose a file or drag and drop it here</p>
+                  <div className="flex flex-col items-center gap-5 text-gray-300">
+                    <ArrowUpFromLine className="bg-gradient-to-r from-pink-500 to-teal-500 w-[38px] h-[38px] p-[6px] text-white rounded-full shadow-lg transform transition-all duration-500 hover:scale-125 hover:rotate-12" />
+                    <p className="text-lg font-semibold">Choose a file or drag and drop it here</p>
                   </div>
-                  <div className="absolute bottom-5 text-center px-5">
-                    We recommend using high quality image less than 10mb or .mp4
-                    file less than 50mb.
+                  <div className="absolute bottom-5 text-center px-5 text-sm">
+                    <p className="text-gray-300">We recommend high-quality images less than 10MB.</p>
                   </div>
                 </>
               )}
             </div>
-            <div className="w-full sm:flex-1 flex flex-col justify-center">
-                <div className="flex flex-col gap-5">
-                  <div className="flex flex-col gap-2 text-xl">
-                    <label className="font-bold">Title</label>
-                    <input type="text" className="focus:outline-none p-2 bg-[#3a3a3a24] rounded-[7px]" placeholder="Add a title" value={title} onChange={(e)=> setTitle(e.target.value)}/>
-                  </div>
-                  <div className="flex flex-col gap-2 text-xl">
-                    <label className="font-bold">Description</label>
-                    <textarea rows={3} className="focus:outline-none p-2 bg-[#3a3a3a24] rounded-[7px]" placeholder="Add a description" value={description} onChange={(e)=> setDescription(e.target.value)}/>
-                  </div>
-                  <div className="flex flex-col gap-2 text-xl">
-                    <label className="font-bold">Tags</label>
-                    <input type="text" className="focus:outline-none p-2 bg-[#3a3a3a24] rounded-[7px]" placeholder="Anime, Naruto, OnePiece" value={tags} onChange={(e)=> setTags(e.target.value)}/>
-                  </div>
-                  <button onClick={handleSubmit} className="bg-black text-white rounded-lg p-2 text-[24px] my-5 font-bold transition-all duration-300 hover:bg-slate-950">
-                    {
-                      loading ? (
-                        <ClipLoader color="#fff" size={20}/>
 
-                      ) : ("Upload Pin")
-                    }
-                  </button>
+            <div className="w-full sm:w-[450px] flex flex-col justify-center gap-5 p-5 backdrop-blur-lg bg-white/10 border-2 border-gradient-to-r from-purple-500 to-indigo-500 rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-500">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2 text-lg">
+                  <label className="font-bold text-gray-100">Title</label>
+                  <input
+                    type="text"
+                    className="focus:outline-none p-3 bg-transparent border-2 border-purple-500 rounded-[8px] text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
+                    placeholder="Add a title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
                 </div>
+
+                <div className="flex flex-col gap-2 text-lg">
+                  <label className="font-bold text-gray-100">Description</label>
+                  <textarea
+                    rows={4}
+                    className="focus:outline-none p-3 bg-transparent border-2 border-purple-500 rounded-[8px] text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
+                    placeholder="Add a description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2 text-lg">
+                  <label className="font-bold text-gray-100">Tags</label>
+                  <input
+                    type="text"
+                    className="focus:outline-none p-3 bg-transparent border-2 border-purple-500 rounded-[8px] text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
+                    placeholder="e.g., Anime, Naruto, OnePiece"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                  />
+                </div>
+
+                <button
+                  onClick={handleSubmit}
+                  className="bg-gradient-to-r from-purple-900 to-indigo-900 text-white rounded-lg p-4 text-[18px] font-bold flex items-center justify-center gap-3 shadow-lg hover:scale-105 hover:from-indigo-600 hover:to-purple-700 transition-all duration-500"
+                >
+                  {loading ? (
+                    <ClipLoader color="#fff" size={20} />
+                  ) : (
+                    "Upload Pin"
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
