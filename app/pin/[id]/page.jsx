@@ -210,7 +210,7 @@ const Pin = () => {
         </div>
       ) : (
         <div className="flex justify-center items-center min-h-[750px]">
-          <ClipLoader color="#ef4444" size={120} />
+          {/* <ClipLoader color="#ef4444" size={120} /> */}
         </div>
       )}
     </>
